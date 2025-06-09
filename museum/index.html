@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferrari F40: Een Legendarische Supercar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #900;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #c00;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .content {
+            text-align: left;
+            background: #b00;
+            padding: 20px;
+            border-radius: 10px;
+            color: #fff;
+        }
+
+        img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 5px solid #fff;
+        }
+
+        h2 {
+            color: #ffcc00;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .highlight {
+            background-color: yellow;
+            color: black;
+        }
+
+        .button-container {
+            margin-bottom: 20px;
+        }
+
+        .button {
+            background-color: #ffcc00;
+            color: #900;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .button:hover {
+            background-color: #ffaa00;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Ferrari F40: Een Legendarische Supercar</h1>
+    </div>
+
+    <div class="button-container">
+        <button class="button" onclick="speakText()" id="speakButton">Lees voor</button>
+        <button class="button" onclick="pauseText()" id="pauseButton">Pauzeer</button>
+        <button class="button" onclick="restartText()" id="restartButton">Opnieuw</button>
+    </div>
+
+    <div class="container">
+        <img src="F40_Ferrari_20090509.jpg" alt="Ferrari F40">
+        <div class="content" id="text-content">
+            <p>De Ferrari F40 is een van de meest iconische supercars ooit gebouwd. Dit model werd in 1987 geïntroduceerd ter ere van het 40-jarig bestaan van Ferrari. Het was de laatste auto die werd goedgekeurd door Enzo Ferrari zelf, wat de F40 nog specialer maakt.</p>
+            
+            <h2>Ontwerp en Prestaties</h2>
+            <p>De F40 werd ontworpen met een focus op snelheid en puur rijplezier. Het ontwerp is aerodynamisch en agressief, met grote luchtinlaten en een opvallende vaste achtervleugel. De carrosserie is grotendeels gemaakt van koolstofvezel, Kevlar en aluminium om het gewicht laag te houden.</p>
+            <p>Onder de motorkap ligt een 2.9-liter V8 met twee turbo’s, die 478 pk levert. Hierdoor kan de F40 in slechts 4,1 seconden van 0 naar 100 km/u accelereren en een topsnelheid van 324 km/u bereiken. Dit maakte de F40 bij zijn introductie de snelste productiewagen ter wereld.</p>
+            
+            <h2>Minimalistisch Interieur</h2>
+            <p>Het interieur van de F40 is zeer spartaans. Luxe zoals radio, airconditioning en tapijt zijn weggelaten om het gewicht te verminderen. Alles draait om de rijervaring, en dat maakt de F40 zo bijzonder.</p>
+            
+            <h2>Productie en Zeldzaamheid</h2>
+            <p>Oorspronkelijk zou Ferrari 400 exemplaren bouwen, maar door de grote vraag werden er uiteindelijk 1.311 stuks geproduceerd tussen 1987 en 1992. Vandaag de dag is de F40 een zeer gewilde klassieker, met prijzen die in de miljoenen lopen.</p>
+            
+            <h2>Conclusie</h2>
+            <p>De Ferrari F40 is een legendarische supercar die tot op de dag van vandaag wordt gezien als een van de beste Ferrari’s ooit. Met zijn rauwe prestaties, minimalistisch design en historische betekenis blijft de F40 een droomauto voor vele autoliefhebbers.</p>
+        </div>
+    </div>
+
+    <script>
+        let speech = new SpeechSynthesisUtterance();
+        let isPaused = false;
+        let sentences = [];
+        let currentIndex = 0;
+
+        function speakText() {
+            if (isPaused) {
+                window.speechSynthesis.resume();
+                document.getElementById("speakButton").innerText = "Lees voor";
+                isPaused = false;
+                return;
+            }
+            
+            window.speechSynthesis.cancel();
+            let textContent = document.getElementById("text-content");
+            let text = textContent.innerHTML;
+            sentences = text.match(/<p>(.*?)<\/p>/g).map(s => s.replace(/<.*?>/g, ''));
+            currentIndex = 0;
+            highlightSentence();
+            readSentence();
+        }
+
+        function readSentence() {
+            if (currentIndex >= sentences.length) return;
+            
+            speech = new SpeechSynthesisUtterance(sentences[currentIndex]);
+            speech.lang = "nl-NL";
+            speech.rate = 1;
+            speech.pitch = 1;
+            
+            speech.onend = function () {
+                removeHighlight();
+                currentIndex++;
+                if (currentIndex < sentences.length) {
+                    highlightSentence();
+                    readSentence();
+                }
+            };
+            
+            window.speechSynthesis.speak(speech);
+        }
+
+        function highlightSentence() {
+            let textContent = document.getElementById("text-content");
+            let paragraphs = textContent.getElementsByTagName("p");
+            removeHighlight();
+            if (currentIndex < paragraphs.length) {
+                paragraphs[currentIndex].classList.add("highlight");
+            }
+        }
+
+        function removeHighlight() {
+            let textContent = document.getElementById("text-content");
+            let paragraphs = textContent.getElementsByTagName("p");
+            for (let p of paragraphs) {
+                p.classList.remove("highlight");
+            }
+        }
+
+        function pauseText() {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.pause();
+                document.getElementById("speakButton").innerText = "Hervat";
+                isPaused = true;
+            }
+        }
+
+        function restartText() {
+            window.speechSynthesis.cancel();  // Stop any ongoing speech
+            isPaused = false;  // Reset the pause state
+            document.getElementById("speakButton").innerText = "Lees voor";  // Reset button text
+            currentIndex = 0;  // Reset to the first sentence
+            highlightSentence();  // Highlight the first sentence
+            readSentence();  // Start reading from the beginning
+        }
+    </script>
+</body>
+
+</html>
